@@ -7,7 +7,7 @@ AnimatorState:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: New State
+  m_Name: IDLE
   m_Speed: 1
   m_CycleOffset: 0
   m_Transitions:
@@ -148,9 +148,9 @@ AnimatorStateMachine:
   m_StateMachineTransitions: {}
   m_StateMachineBehaviours: []
   m_AnyStatePosition: {x: 50, y: 20, z: 0}
-  m_EntryPosition: {x: 50, y: 120, z: 0}
+  m_EntryPosition: {x: 50, y: 170, z: 0}
   m_ExitPosition: {x: 760, y: 40, z: 0}
-  m_ParentStateMachinePosition: {x: 420, y: -90, z: 0}
+  m_ParentStateMachinePosition: {x: 430, y: -110, z: 0}
   m_DefaultState: {fileID: -7221853185844690871}
 --- !u!1102 &6092434544574695144
 AnimatorState:
