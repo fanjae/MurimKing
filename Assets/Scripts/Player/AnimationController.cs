@@ -3,14 +3,21 @@
 public class AnimationController : MonoBehaviour
 {
     [SerializeField] private Animator refAnimator;
-    private void OnEnable()
+    private void Awake()
     {
+        refAnimator = GetComponentInParent<Animator>();
+
         if (refAnimator == null)
         {
-            refAnimator = GetComponentInParent<Animator>();
+            Debug.LogWarning("Animator not found in parent");
         }
     }
-    
+
+    public void OnLanding()
+    {
+        refAnimator.SetTrigger("Landing");
+    }
+
 
     // 상태 교체를 애니메이터에 알림.
     public void OnStateChanged(PlayerStateManager.State newState)
@@ -18,5 +25,13 @@ public class AnimationController : MonoBehaviour
         if (refAnimator == null) return;
 
         refAnimator.SetInteger("State", (int)newState);
+    }
+
+
+    // 점프에 대해서 0.03초 동안 부드럽게 넘어가고, 0.3초부터 시작
+    public void PlayJump()
+    {
+        
+        refAnimator.CrossFade("Jump", 0.03f, 0, 0.3f);
     }
 }
