@@ -44,7 +44,6 @@ public class AnimationController : MonoBehaviour
     // 점프에 대해서 0.03초 동안 부드럽게 넘어가고, 0.3초부터 시작
     public void PlayJump()
     {
-        
         refAnimator.CrossFade("Jump", 0.03f, 0, 0.3f);
     }
 }
