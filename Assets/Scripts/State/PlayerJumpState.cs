@@ -9,8 +9,8 @@ public class PlayerJumpState : PlayerStateBase
     {
         base.OnEnable();
 
-        animationController.PlayJump();
-        movementController.JumpVelocitySet(jumpSpeed);
+        animationController.PlayJump(); // 점프 애니메이션 재생
+        movementController.JumpVelocitySet(jumpSpeed); // verticalVelocity와 중력 계산으로 처리
     }
 
     private void Update()
