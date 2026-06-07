@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
 
-public class PlayerIdleState : MonoBehaviour
+public class PlayerIdleState : PlayerStateBase
 {
 
 }
