@@ -22,9 +22,22 @@ public class AnimationController : MonoBehaviour
     // 상태 교체를 애니메이터에 알림.
     public void OnStateChanged(PlayerStateManager.State newState)
     {
-        if (refAnimator == null) return;
-
+        if (refAnimator == null)
+        {
+            Debug.LogError("refAnimator is null");
+            return;
+        }
         refAnimator.SetInteger("State", (int)newState);
+    }
+
+    public void SetCombat(bool isCombat)
+    {
+        if (refAnimator == null)
+        {
+            Debug.LogError("refAnimator is null");
+            return;
+        }
+        refAnimator.SetBool("IsCombat", isCombat);
     }
 
 
