@@ -10,6 +10,7 @@ public class InputManager : MonoBehaviour
     public static bool IsJump { get; private set; } = false;
 
     public static bool IsCombat { get; private set; } = false;
+    public static bool IsAttack { get; private set; } = false;
 
     public static bool IsRightMousePressed { get; private set; } = false;
 
@@ -20,6 +21,7 @@ public class InputManager : MonoBehaviour
 
     // 전투 관련 입력
     private InputAction combatAction;
+    private InputAction attackAction;
 
     // 카메라 관련 입력
     private InputAction cameraAction;
@@ -29,9 +31,12 @@ public class InputManager : MonoBehaviour
     {
         if(moveAction == null) moveAction = InputSystem.actions.FindAction("Move");
         if(jumpAction == null) jumpAction = InputSystem.actions.FindAction("Jump");
+
         if (combatAction == null) combatAction = InputSystem.actions.FindAction("Combat");
+        if (attackAction == null) attackAction = InputSystem.actions.FindAction("Attack");
 
         if (cameraAction == null) cameraAction = InputSystem.actions.FindAction("Camera");
+
     }
     private void Update()
     {
@@ -39,6 +44,8 @@ public class InputManager : MonoBehaviour
         IsJump = jumpAction.WasPressedThisFrame();
 
         IsCombat = combatAction.WasPressedThisFrame();
+        IsAttack = attackAction.WasPressedThisFrame();
+
         IsRightMousePressed = cameraAction.IsPressed(); // 누르고 있는 동안 true
     }
 }

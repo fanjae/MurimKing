@@ -414,6 +414,7 @@ GameObject:
   - component: {fileID: 433330697}
   - component: {fileID: 433330696}
   - component: {fileID: 433330701}
+  - component: {fileID: 433330702}
   - component: {fileID: 433330699}
   - component: {fileID: 433330700}
   m_Layer: 0
@@ -558,6 +559,27 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PlayerJumpState
   jumpSpeed: 3.5
+--- !u!114 &433330702
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 433330693}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 340930a5149365c4bb9733efd1a1a403, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::PlayerAttackState
+  OnAttackBegin:
+    m_PersistentCalls:
+      m_Calls: []
+  OnAttackCheckEnd:
+    m_PersistentCalls:
+      m_Calls: []
+  OnAttackEnd:
+    m_PersistentCalls:
+      m_Calls: []
 --- !u!1 &832575517
 GameObject:
   m_ObjectHideFlags: 0
@@ -764,7 +786,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 87b81839a6f512342b246b90111e57c8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::AnimationController
-  refAnimator: {fileID: 0}
+  refAnimator: {fileID: 433330699}
 --- !u!1001 &1810723120
 PrefabInstance:
   m_ObjectHideFlags: 0

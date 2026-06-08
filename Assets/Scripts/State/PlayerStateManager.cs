@@ -7,6 +7,7 @@ public class PlayerStateManager : MonoBehaviour
         None = -1, Idle, Move, Jump, Length
     }
 
+    // 플레이어의 현재 상태 표시 및 상태 배열
     [SerializeField] private State state = State.None;
     [SerializeField] private PlayerStateBase[] states;
 
@@ -16,6 +17,7 @@ public class PlayerStateManager : MonoBehaviour
     [SerializeField] private bool isCombat = false;
     [SerializeField] private float combatReturnTime = 5.0f;
     private float combatTimer = 0.0f;
+    public bool IsNextAttackReserved { get; private set; } = false;
 
     private void Awake()
     {
@@ -33,27 +35,7 @@ public class PlayerStateManager : MonoBehaviour
         /// 점프일때는 대기
         if (state == State.Jump) return;
 
-        // 전투 모드 On/Off
-        if (InputManager.IsCombat)
-        {
-            isCombat = !isCombat;
-            combatTimer = 0.0f;
-
-            animationController.SetCombat(isCombat);
-        }
-
-        if(isCombat)
-        {
-            combatTimer += Time.deltaTime;
-
-            if (combatTimer >= combatReturnTime) // 5초 지나면 전투 모드 해제
-            {
-                isCombat = false;
-                animationController.SetCombat(false);
-            }
-
-            return;
-        }
+        HandleCombat();
 
         // 지면에 있고, 점프 입력이 들어온 경우 처리
         if (movementController.IsGrounded && InputManager.IsJump && CanJumpCurrentState())
@@ -73,6 +55,43 @@ public class PlayerStateManager : MonoBehaviour
             SetState(State.Move);
         }
 
+    }
+
+    private void HandleCombat()
+    {
+        // 전투 모드 On/Off
+        if (InputManager.IsCombat)
+        {
+            isCombat = !isCombat;
+            combatTimer = 0.0f;
+            animationController.SetCombat(isCombat);
+        }
+
+        if (!isCombat) return;
+
+        combatTimer += Time.deltaTime;
+
+        if (InputManager.IsAttack)
+        {
+            combatTimer = 0.0f;
+
+            // 애니메이션 재생 여부 확인
+            if (IsAttacking())
+            {
+                // 다음 콤보 예약 
+                IsNextAttackReserved = true;
+            }
+            else
+            {
+                animationController.SetAttackTrigger();
+            }
+        }
+
+        if (combatTimer >= combatReturnTime)
+        {
+            isCombat = false;
+            animationController.SetCombat(false);
+        }
     }
 
     private bool CanJumpCurrentState()
@@ -103,5 +122,18 @@ public class PlayerStateManager : MonoBehaviour
         {
             Debug.LogWarning("AnimationController is null");
         }
+    }
+    private bool IsAttacking()
+    {
+        AnimatorStateInfo info = animationController.GetCurrentStateInfo();
+
+        return info.IsName("Attack_01") ||
+               info.IsName("Attack_02") ||
+               info.IsName("Attack_03");
+    }
+
+    public void ClearNextAttackReserved()
+    {
+        IsNextAttackReserved = false;
     }
 }
