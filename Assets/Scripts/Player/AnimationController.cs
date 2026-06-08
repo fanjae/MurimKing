@@ -18,7 +18,6 @@ public class AnimationController : MonoBehaviour
         refAnimator.SetTrigger("Landing");
     }
 
-
     // 상태 교체를 애니메이터에 알림.
     public void OnStateChanged(PlayerStateManager.State newState)
     {
@@ -30,6 +29,13 @@ public class AnimationController : MonoBehaviour
         refAnimator.SetInteger("State", (int)newState);
     }
 
+    // 점프에 대해서 0.03초 동안 부드럽게 넘어가고, 0.3초부터 시작
+    public void PlayJump()
+    {
+        refAnimator.CrossFade("Jump", 0.03f, 0, 0.3f);
+    }
+
+    // 전투 모드
     public void SetCombat(bool isCombat)
     {
         if (refAnimator == null)
@@ -40,10 +46,22 @@ public class AnimationController : MonoBehaviour
         refAnimator.SetBool("IsCombat", isCombat);
     }
 
-
-    // 점프에 대해서 0.03초 동안 부드럽게 넘어가고, 0.3초부터 시작
-    public void PlayJump()
+    // 공격 상태 설정
+    public void SetAttackTrigger()
     {
-        refAnimator.CrossFade("Jump", 0.03f, 0, 0.3f);
+        if (refAnimator == null) return;
+        refAnimator.SetTrigger("Attack");
+    }
+
+    // 콤보 공격 상태 설정
+    public void SetNextAttackTrigger()
+    {
+        if (refAnimator == null) return;
+        refAnimator.SetTrigger("NextAttack");
+    }
+
+    public AnimatorStateInfo GetCurrentStateInfo()
+    {
+        return refAnimator.GetCurrentAnimatorStateInfo(0);
     }
 }
