@@ -5,7 +5,6 @@
 public class PlayerMovementController : MonoBehaviour
 {
     [SerializeField] private Animator animator;
-    private PlayerStateManager stateManager;
     [SerializeField] private CharacterController controller;
 
     // 점프 및 낙하 속도
@@ -16,10 +15,8 @@ public class PlayerMovementController : MonoBehaviour
     private void Awake()
     {
         if (animator == null) animator = GetComponent<Animator>();
-
         if (controller == null) controller = GetComponent<CharacterController>();
 
-        stateManager = GetComponent<PlayerStateManager>();
     }
 
     private void OnAnimatorMove()
