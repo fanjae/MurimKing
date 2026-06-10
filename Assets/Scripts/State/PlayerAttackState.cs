@@ -13,7 +13,11 @@ public class PlayerAttackState : PlayerStateBase
     //애니메이션 이벤트 리스너 메서드
     private void AttackStart()
     {
-        //공격 판정 시작 이벤트 발행
+        if (!manager.UseAttackStamina())
+        {
+            return;
+        }
+
         OnAttackBegin?.Invoke();
     }
     //공격 시작 이벤트에 리스너 메서드를 등록할때 사용하는 메서드
