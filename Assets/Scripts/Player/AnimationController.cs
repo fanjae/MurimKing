@@ -64,4 +64,11 @@ public class AnimationController : MonoBehaviour
     {
         return refAnimator.GetCurrentAnimatorStateInfo(0);
     }
+
+    public void PlayDie()
+    {
+        if (refAnimator == null) return;
+
+        refAnimator.SetTrigger("Die");
+    }
 }
