@@ -198,6 +198,37 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &292763972
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 292763973}
+  m_Layer: 0
+  m_Name: Respawn Point
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &292763973
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 292763972}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &330585543
 GameObject:
   m_ObjectHideFlags: 0
@@ -488,16 +519,18 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 433330694}
+  - component: {fileID: 433330699}
+  - component: {fileID: 433330704}
   - component: {fileID: 433330695}
+  - component: {fileID: 433330700}
   - component: {fileID: 433330698}
   - component: {fileID: 433330697}
   - component: {fileID: 433330696}
   - component: {fileID: 433330701}
   - component: {fileID: 433330702}
-  - component: {fileID: 433330699}
-  - component: {fileID: 433330700}
+  - component: {fileID: 433330706}
   - component: {fileID: 433330703}
-  - component: {fileID: 433330704}
+  - component: {fileID: 433330705}
   m_Layer: 0
   m_Name: Player
   m_TagString: Untagged
@@ -567,7 +600,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 433330693}
-  m_Enabled: 0
+  m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 4617ce7422b8e4d479920a06881313c5, type: 3}
   m_Name: 
@@ -589,8 +622,11 @@ MonoBehaviour:
   - {fileID: 433330697}
   - {fileID: 433330696}
   - {fileID: 433330701}
+  - {fileID: 433330706}
   isCombat: 0
   combatReturnTime: 5
+  attackStaminaCost: 4
+  attackCoolTime: 0.2
 --- !u!95 &433330699
 Animator:
   serializedVersion: 7
@@ -675,6 +711,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::PlayerHealth
   maxHP: 100
   hpGage: {fileID: 1311224479}
+  respawnPoint: {fileID: 292763973}
+  respawnDelay: 5
 --- !u!54 &433330704
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -702,6 +740,33 @@ Rigidbody:
   m_Interpolate: 0
   m_Constraints: 112
   m_CollisionDetection: 0
+--- !u!114 &433330705
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 433330693}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a6472a3b4d0872340acdf4d8b3b450a4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::PlayerStamina
+  maxStamina: 100
+  recoverSpeed: 10
+  staminaGage: {fileID: 1647443493}
+--- !u!114 &433330706
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 433330693}
+  m_Enabled: 0
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 463a8f753810157409069105f5d32e82, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::PlayerDieState
 --- !u!1001 &482646357
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -749,6 +814,10 @@ PrefabInstance:
     - target: {fileID: 1444779545632823919, guid: 4765f005cde48f1478515a6e4b0ea47d, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1493670570087680449, guid: 4765f005cde48f1478515a6e4b0ea47d, type: 3}
+      propertyPath: damagePerSecond
+      value: 40
       objectReference: {fileID: 0}
     - target: {fileID: 5657620742101055284, guid: 4765f005cde48f1478515a6e4b0ea47d, type: 3}
       propertyPath: m_Name
@@ -1171,6 +1240,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::PlayerHealth
   maxHP: 100
   hpGage: {fileID: 1311224479}
+  respawnPoint: {fileID: 0}
+  respawnDelay: 5
 --- !u!1001 &1527415740
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -1470,3 +1541,4 @@ SceneRoots:
   - {fileID: 482646357}
   - {fileID: 1527415740}
   - {fileID: 972385077}
+  - {fileID: 292763973}
