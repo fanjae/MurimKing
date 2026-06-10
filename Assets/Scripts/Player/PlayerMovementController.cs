@@ -5,6 +5,7 @@
 public class PlayerMovementController : MonoBehaviour
 {
     [SerializeField] private Animator animator;
+    private PlayerStateManager stateManager;
     [SerializeField] private CharacterController controller;
 
     // 점프 및 낙하 속도
@@ -17,10 +18,15 @@ public class PlayerMovementController : MonoBehaviour
         if (animator == null) animator = GetComponent<Animator>();
 
         if (controller == null) controller = GetComponent<CharacterController>();
+
+        stateManager = GetComponent<PlayerStateManager>();
     }
 
     private void OnAnimatorMove()
     {
+        if (controller == null || !controller.enabled)
+            return;
+        
         // 이전 이동 결과 기준 지면 확인
         IsGrounded = controller.isGrounded;
 
@@ -41,7 +47,6 @@ public class PlayerMovementController : MonoBehaviour
 
     public void JumpVelocitySet(float jumpSpeed)
     {
-        
         verticalVelocity.y = jumpSpeed;
     }
 }
