@@ -55,15 +55,15 @@ ModelImporter:
       bodyMask: 01000000010000000100000001000000010000000100000001000000010000000100000001000000010000000100000001000000
       curves: []
       events:
-      - time: 0.50053936
-        functionName: ComboCheck
+      - time: 0
+        functionName: AttackStart
         data: 
         objectReferenceParameter: {instanceID: 0}
         floatParameter: 0
         intParameter: 0
         messageOptions: 0
-      - time: 0.96655875
-        functionName: AttackEnd
+      - time: 0.5047147
+        functionName: ComboCheck
         data: 
         objectReferenceParameter: {instanceID: 0}
         floatParameter: 0
