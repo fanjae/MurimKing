@@ -1,18 +1,17 @@
 ﻿using UnityEngine;
 using UnityEngine.InputSystem;
 
-public class InputManager : MonoBehaviour
+public class InputManager : MonoBehaviour, IPlayerInput
 {
     // 이동 값
-    public static Vector2 MoveMent;
+    public Vector2 Movement { get; private set; }
+    public Vector2 LookDelta { get; private set; }
 
     // 점프 여부
-    public static bool IsJump { get; private set; } = false;
-
-    public static bool IsCombat { get; private set; } = false;
-    public static bool IsAttack { get; private set; } = false;
-
-    public static bool IsRightMousePressed { get; private set; } = false;
+    public bool JumpPressed { get; private set; }
+    public bool CombatPressed { get; private set; }
+    public bool AttackPressed { get; private set; }
+    public bool CameraRotatePressed { get; private set; }
 
 
     private InputAction moveAction;
@@ -29,23 +28,20 @@ public class InputManager : MonoBehaviour
 
     private void Awake()
     {
-        if(moveAction == null) moveAction = InputSystem.actions.FindAction("Move");
-        if(jumpAction == null) jumpAction = InputSystem.actions.FindAction("Jump");
-
-        if (combatAction == null) combatAction = InputSystem.actions.FindAction("Combat");
-        if (attackAction == null) attackAction = InputSystem.actions.FindAction("Attack");
-
-        if (cameraAction == null) cameraAction = InputSystem.actions.FindAction("Camera");
-
+        moveAction = InputSystem.actions.FindAction("Move");
+        jumpAction = InputSystem.actions.FindAction("Jump");
+        combatAction = InputSystem.actions.FindAction("Combat");
+        attackAction = InputSystem.actions.FindAction("Attack");
+        cameraAction = InputSystem.actions.FindAction("Camera");
     }
     private void Update()
     {
-        MoveMent = moveAction.ReadValue<Vector2>();
-        IsJump = jumpAction.WasPressedThisFrame();
+        Movement = moveAction.ReadValue<Vector2>();
+        LookDelta = Mouse.current != null ? Mouse.current.delta.ReadValue() : Vector2.zero;
 
-        IsCombat = combatAction.WasPressedThisFrame();
-        IsAttack = attackAction.WasPressedThisFrame();
-
-        IsRightMousePressed = cameraAction.IsPressed(); // 누르고 있는 동안 true
+        JumpPressed = jumpAction.WasPressedThisFrame();
+        CombatPressed = combatAction.WasPressedThisFrame();
+        AttackPressed = attackAction.WasPressedThisFrame();
+        CameraRotatePressed = cameraAction.IsPressed();
     }
 }

@@ -17,7 +17,7 @@ public class PlayerJumpState : PlayerStateBase
     {
         if (movementController.IsGrounded)
         {
-            if (InputManager.MoveMent == Vector2.zero) manager.SetState(PlayerStateManager.State.Idle);
+            if (input.Movement == Vector2.zero) manager.SetState(PlayerStateManager.State.Idle);
             else manager.SetState(PlayerStateManager.State.Move);
         }
     }

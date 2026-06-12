@@ -6,7 +6,8 @@ public class PlayerMoveState : PlayerStateBase
 
     private void Update()
     {
-        Vector3 direction = new Vector3(InputManager.MoveMent.x,0.0f,InputManager.MoveMent.y);
+        Vector2 movement = input.Movement;
+        Vector3 direction = new Vector3(movement.x, 0.0f, movement.y);
 
         if (direction.sqrMagnitude > 1.0f) direction.Normalize();  // 벡터 길이의 제곱이 1을 넘으면 보정
 

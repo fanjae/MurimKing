@@ -6,6 +6,7 @@ public class PlayerStateBase : MonoBehaviour
     protected PlayerStateManager manager;
     protected PlayerMovementController movementController;
     protected AnimationController animationController;
+    protected IPlayerInput input;
 
     protected virtual void OnEnable()
     {
@@ -13,5 +14,6 @@ public class PlayerStateBase : MonoBehaviour
         manager = GetComponent<PlayerStateManager>();
         movementController = GetComponent<PlayerMovementController>();
         animationController = GetComponentInChildren<AnimationController>();
+        input = GetComponent<IPlayerInput>();
     }
 }

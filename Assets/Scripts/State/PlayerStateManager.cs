@@ -19,7 +19,9 @@ public class PlayerStateManager : MonoBehaviour
     private PlayerMovementController movementController;
     private AnimationController animationController;
     private PlayerStamina stamina;
-    
+    private IPlayerInput input;
+
+
     private float combatTimer = 0.0f;
     public bool IsNextAttackReserved { get; private set; } = false;
     private float attackTimer = 0.0f;
@@ -33,6 +35,7 @@ public class PlayerStateManager : MonoBehaviour
         movementController = GetComponent<PlayerMovementController>();
         animationController = GetComponentInChildren<AnimationController>();
         stamina = GetComponent<PlayerStamina>();
+        input = GetComponent<IPlayerInput>();
     }
 
     private void OnEnable()
@@ -43,6 +46,7 @@ public class PlayerStateManager : MonoBehaviour
     private void Update()
     {
         if (state == State.Die) return; // 사망 상태에서는 모든 입력처리가 다 막힘
+        if (input == null) return;
 
         if (attackTimer > 0.0f)
         {
@@ -55,13 +59,13 @@ public class PlayerStateManager : MonoBehaviour
         HandleCombat();
 
         // 지면에 있고, 점프 입력이 들어온 경우 처리
-        if (movementController.IsGrounded && InputManager.IsJump && CanJumpCurrentState())
+        if (movementController.IsGrounded && input.JumpPressed && CanJumpCurrentState())
         {
             SetState(State.Jump);
             return;
         }
 
-        if (InputManager.MoveMent == Vector2.zero)
+        if (input.Movement == Vector2.zero)
         {
             // 이동 없음.
             SetState(State.Idle);
@@ -77,7 +81,7 @@ public class PlayerStateManager : MonoBehaviour
     private void HandleCombat()
     {
         // 전투 모드 On/Off
-        if (InputManager.IsCombat)
+        if (input.CombatPressed)
         {
             isCombat = !isCombat;
             combatTimer = 0.0f;
@@ -88,7 +92,7 @@ public class PlayerStateManager : MonoBehaviour
 
         combatTimer += Time.deltaTime;
 
-        if (InputManager.IsAttack && attackTimer <= 0.0f)
+        if (input.AttackPressed && attackTimer <= 0.0f)
         {
             attackTimer = attackCoolTime;
             combatTimer = 0.0f;
