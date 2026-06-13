@@ -37,7 +37,7 @@ ModelImporter:
       firstFrame: 0
       lastFrame: 26
       wrapMode: 0
-      orientationOffsetY: 20
+      orientationOffsetY: -15
       level: 0
       cycleOffset: 0
       loop: 0
@@ -55,15 +55,29 @@ ModelImporter:
       bodyMask: 01000000010000000100000001000000010000000100000001000000010000000100000001000000010000000100000001000000
       curves: []
       events:
-      - time: 0
-        functionName: AttackStart
+      - time: 0.29198357
+        functionName: RightAttackStart
         data: 
         objectReferenceParameter: {instanceID: 0}
         floatParameter: 0
         intParameter: 0
         messageOptions: 0
-      - time: 0.5047147
+      - time: 0.5989421
+        functionName: AttackCheckEnd
+        data: 
+        objectReferenceParameter: {instanceID: 0}
+        floatParameter: 0
+        intParameter: 0
+        messageOptions: 0
+      - time: 0.71388847
         functionName: ComboCheck
+        data: 
+        objectReferenceParameter: {instanceID: 0}
+        floatParameter: 0
+        intParameter: 0
+        messageOptions: 0
+      - time: 0.8290279
+        functionName: AttackEnd
         data: 
         objectReferenceParameter: {instanceID: 0}
         floatParameter: 0
