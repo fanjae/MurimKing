@@ -20,6 +20,8 @@ public class EnemyHealth : MonoBehaviour
 
         // 받은 데미지 만큼 현재 체력 감소
         currentHP -= damage;
+
+        Debug.Log($"Hit : Current HP : {currentHP}");
         currentHP = Mathf.Clamp(currentHP, 0f, data.maxHP);
 
         // 체력이 0이하가 되면 사망 처리
