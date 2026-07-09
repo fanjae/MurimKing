@@ -12,6 +12,7 @@ public class InputManager : MonoBehaviour, IPlayerInput
     public bool CombatPressed { get; private set; }
     public bool AttackPressed { get; private set; }
     public bool CameraRotatePressed { get; private set; }
+    public bool InventoryPressed { get; private set; }
 
 
     private InputAction moveAction;
@@ -25,6 +26,9 @@ public class InputManager : MonoBehaviour, IPlayerInput
     // 카메라 관련 입력
     private InputAction cameraAction;
 
+    // 인벤토리 입력
+    private InputAction inventoryAction;
+
 
     private void Awake()
     {
@@ -33,6 +37,8 @@ public class InputManager : MonoBehaviour, IPlayerInput
         combatAction = InputSystem.actions.FindAction("Combat");
         attackAction = InputSystem.actions.FindAction("Attack");
         cameraAction = InputSystem.actions.FindAction("Camera");
+
+        inventoryAction = InputSystem.actions.FindAction("Inventory");
     }
     private void Update()
     {
@@ -43,5 +49,7 @@ public class InputManager : MonoBehaviour, IPlayerInput
         CombatPressed = combatAction.WasPressedThisFrame();
         AttackPressed = attackAction.WasPressedThisFrame();
         CameraRotatePressed = cameraAction.IsPressed();
+
+        InventoryPressed = inventoryAction.WasPressedThisFrame();
     }
 }
