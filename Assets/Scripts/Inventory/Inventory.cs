@@ -1,0 +1,259 @@
+﻿using System;
+using System.Collections.Generic;
+public class Inventory
+{
+    private readonly List<InventorySlot> slots;
+    public IReadOnlyList<InventorySlot> Slots => slots;
+
+    public event Action OnInventoryChanged; // 인벤토리 변경에 대한 이벤트
+
+    public Inventory(int slotCount) // 인벤토리 슬롯 셋팅
+    {
+        if (slotCount <= 0) throw new ArgumentException("Slot Count >= 1");
+
+        // 고정 크기 인벤토리 전제로 생성 시 빈 슬롯을 미리 채움.
+        slots = new List<InventorySlot>(slotCount);
+
+        for(int i= 0; i <slotCount; i++)
+        {
+            slots.Add(new InventorySlot());
+        }
+    }
+
+    public bool AddItem(ItemData itemData, int count = 1)
+    {
+        if (itemData == null || count <= 0) return false;
+
+        // 공간 부족하면 아무 변경도 하지 않음
+        if (!CanAddItem(itemData, count)) return false;
+
+        int remainingCount = count;
+
+        // 스택 가능한 아이템이면 기존 같은 아이템 슬롯부터 채움
+        if(itemData.IsStackable)
+        {
+            remainingCount = AddToExistingStacks(itemData, remainingCount);
+        }
+
+        // 기존 슬롯에 다 못 넣은 수량은 빈 슬롯에 추가
+        if(remainingCount > 0)
+        {
+            remainingCount = AddToEmptySlots(itemData, remainingCount);
+        }
+        
+        if (remainingCount != 0) return false; // 논리적 오류
+        
+        OnInventoryChanged?.Invoke();
+        return true;
+    }
+
+    // 지정한 수 만큼 아이템 제거
+    public bool RemoveItemAt(int slotIndex, int count = 1)
+    {
+        if (count <= 0) return false;
+
+        // 잘못된 슬롯 처리
+        if (!TryGetSlot(slotIndex, out InventorySlot slot)) return false;
+
+        if (slot.IsEmpty) return false;
+
+        // 슬롯에 있는 수량보다 많이 제거 불가
+        if (slot.Count < count) return false;
+
+        slot.RemoveCount(count);
+
+        OnInventoryChanged?.Invoke();
+        return true;
+    }
+
+    // 특정 ItemId를 가진 아이템을 인벤토리 전체에서 수량 만큼 제거
+    public bool RemoveItem(int itemId, int count)
+    {
+        if (itemId <= 0 || count <= 0) return false;
+
+        // 제거하기 전에 충분한 수량 보유 여부 확인
+        if (!HasItem(itemId, count)) return false;
+
+        int remainingCount = count;
+
+        // 뒷쪽 슬롯부터 제거
+        // 여러 슬롯에 나뉜 아이템은 순차적으로 소모
+        for (int i = slots.Count - 1; i >= 0 && remainingCount > 0; i-- )
+        {
+            InventorySlot slot = slots[i];
+
+            // 같은 ItemID를 가진 모든 슬롯 수량 합산
+            if (slot.IsEmpty || slot.ItemId != itemId) continue;
+
+            int removeCount = Math.Min(slot.Count, remainingCount);
+            slot.RemoveCount(removeCount);
+            remainingCount -= removeCount;
+        }
+
+        OnInventoryChanged?.Invoke();
+        return true;
+    }
+
+
+    // 인벤토리에 특정 ItemID 아이템이 지정 수량 이상 존재하는지 체크
+    public bool HasItem(int ItemId, int count)
+    {
+        if (ItemId <= 0 || count <= 0) return false;
+
+        int totalCount = 0;
+
+        foreach (InventorySlot slot in slots)
+        {
+            if(!slot.IsEmpty && slot.ItemId == ItemId)
+            {
+                totalCount += slot.Count;
+            }
+        }
+
+        return totalCount >= count;
+    }
+
+
+
+    // 슬롯 인덱스로 슬롯을 가져옴
+    public bool TryGetSlot(int slotIndex, out InventorySlot slot)
+    {
+        if (slotIndex < 0 || slotIndex >= slots.Count) // 잘못 인덱스 처리
+        {
+            slot = null;
+            return false;
+        }
+
+        slot = slots[slotIndex];
+        return true;
+    }
+
+
+    // 같은 Item에 가진 기존 슬롯에 가능한 만큼 수량을 추가하고 남은 수량을 반환
+    private int AddToExistingStacks(ItemData itemData, int count)
+    {
+        if (count <= 0) return count;
+
+        foreach (InventorySlot slot in slots)
+        {
+            if (slot.IsEmpty) continue;
+
+            if (slot.ItemId != itemData.ItemId) continue;
+
+            // 기존 슬롯에 가능한 수 만큼 수량을 추가.
+            int availableCount = itemData.MaxStackCount - slot.Count;
+
+            if (availableCount <= 0) continue;
+
+            // 기존 슬롯에 가능한 수 vs 아이템의 개수 비교
+            int addCount = Math.Min(availableCount, count);
+            slot.AddCount(addCount);
+            count -= addCount;
+
+            if (count <= 0) break;
+        }
+        return count;
+    }
+
+
+    // 빈 슬롯에 아이템 추가
+    private int AddToEmptySlots(ItemData itemData, int count)
+    {
+        foreach  (InventorySlot slot in slots)
+        {
+            if (!slot.IsEmpty) continue;
+
+            // 스택 가능한 아이템은 최대 스택 수 만큼 처리하고 스택 불가능한 아이템은 슬롯당 1개씩 추가
+            int addCount = itemData.IsStackable ? Math.Min(itemData.MaxStackCount, count) : 1;
+
+            slot.SetItem(itemData, addCount);
+            count -= addCount;
+
+            if (count <= 0) break;
+        }
+
+        // 남은 수량 반환
+        return count;
+    }
+
+    // 아이템을 지정한 수량 만큼 추가 가능 여부체크
+    public bool CanAddItem(ItemData itemData, int count = 1)
+    {
+        // 잘못된 아이템 데이터나 수량은 추가 불가
+        if (itemData == null || count <= 0) return false;
+
+        // 남은 수량
+        int remainingCount = count;
+
+        foreach (InventorySlot slot in slots)
+        {
+            if (slot.IsEmpty)
+            {
+                // 빈 슬롯이면 스택 가능 아이템은 최대 수 만큼, 스택 불가능 아이템은 1개만 들어감
+                remainingCount -= itemData.IsStackable ? itemData.MaxStackCount : 1;
+            }
+            else if (itemData.IsStackable && slot.ItemId == itemData.ItemId)
+            {
+                // 같은 아이템이 들어있는 기존 스택 슬롯은 최대 스택 수까지 남은 공간 만큼 사용 가능
+                int availableCount = itemData.MaxStackCount - slot.Count;
+                remainingCount -= availableCount;
+            }
+
+            // 남은 수량이 0 이하 = 넣을 공간이 충분
+            if (remainingCount <= 0) return true;
+        }
+
+        // 공간 부족하면 추가 불가능
+        return false;
+    }
+
+    // 기존 아이템을 교체하는 경우 사용
+    public bool ReplaceItemAt(int slotIndex, ItemData newItemData, int count = 1)
+    {
+        if (newItemData == null || count <= 0) return false;
+        if (!TryGetSlot(slotIndex, out InventorySlot slot)) return false;
+        if (slot.IsEmpty) return false;
+
+        slot.SetItem(newItemData, count);
+        OnInventoryChanged?.Invoke();
+        return true;
+    }
+
+    // 특정 아이템에 대한 보유 개수를 조회.
+    public int GetItemCount(int itemId)
+    {
+        if (itemId <= 0) return 0;
+
+        int totalCount = 0;
+
+        foreach (InventorySlot slot in slots)
+        {
+            // 빈 슬롯이거나 아이템 다르면 제외
+            if (!slot.IsEmpty && slot.ItemId == itemId)
+            {
+                // 같은 아이템 수량 모두 합산
+                totalCount += slot.Count;
+            }
+        }
+
+        return totalCount;
+    }
+
+    // 인벤토리 슬롯 간 위치 교환
+    public bool SwapSlots(int fromIndex, int toIndex)
+    {
+        // 같은 슬롯이면 교환할 필요 없음
+        if (fromIndex == toIndex) return false;
+
+        // 잘못된 인덱스면 교환 실패
+        if (!TryGetSlot(fromIndex, out _)) return false;
+        if (!TryGetSlot(toIndex, out _)) return false;
+
+        // 슬롯 내부 데이터가 아니라 슬롯 객체 자체를 교환
+        (slots[fromIndex], slots[toIndex]) = (slots[toIndex], slots[fromIndex]);
+
+        // 인벤토리 UI 갱신 알림
+        OnInventoryChanged?.Invoke();
+        return true;
+    }
+}
