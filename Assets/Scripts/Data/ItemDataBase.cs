@@ -1,37 +1,36 @@
-﻿using System.Collections.Generic;
+﻿
+using System.Collections.Generic;
 using UnityEngine;
 
-[CreateAssetMenu(menuName = "Item/Item Database")]
+[CreateAssetMenu(fileName = "ItemDatabase", menuName = "Item/Item Database")]
 public class ItemDatabase : ScriptableObject
 {
+    // 전체 아이템 목록
     [SerializeField] private List<ItemData> items;
 
+    // ItemId로 찾기 위한 Dictionary
     private Dictionary<int, ItemData> itemMap;
 
-    private void OnEnable()
+    // Items 리스트를 ItemId 기준 Dictionary로 변환
+    public void Initialize()
     {
         itemMap = new Dictionary<int, ItemData>();
 
         foreach (ItemData item in items)
         {
             if (item == null) continue;
-            itemMap[item.Id] = item;
+
+            itemMap[item.ItemId] = item;
         }
     }
 
-    public bool TryGet(int itemId, out ItemData itemData)
+    // ItemID에 해당하는 ItemData 반환
+    public ItemData GetItem(int itemId)
     {
-        return itemMap.TryGetValue(itemId, out itemData);
-    }
+        // 아직 초기화 되지 않았다면 1회 초기화 진행
+        if (itemMap == null) Initialize();
 
-    public ItemData Get(int itemId)
-    {
-        if (!TryGet(itemId, out ItemData itemData))
-        {
-            Debug.LogError($"존재하지 않는 아이템 ID: {itemId}");
-            return null;
-        }
-
-        return itemData;
+        itemMap.TryGetValue(itemId, out ItemData item);
+        return item;
     }
 }
