@@ -9,4 +9,6 @@ public interface IPlayerInput
     bool CombatPressed { get; }
     bool AttackPressed { get; }
     bool CameraRotatePressed { get; }
+
+    bool InventoryPressed { get; }
 }
