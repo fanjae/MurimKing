@@ -14,13 +14,14 @@ public class ConsumableData : ItemData
     public ConsumableType ConsuabmeType => consumableType;
     public int Value => value;
 
-    public override bool Use(Player player)
+    public override bool Use(PlayerHealth playerHealth)
     {
-        if (player == null) return false;
+        if (playerHealth == null) return false;
 
         switch (consumableType)
         {
             case ConsumableType.HealHp: // 체력 포션 사용
+                return playerHealth.Heal(value);
                 
             default:
                 return false;

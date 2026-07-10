@@ -29,22 +29,9 @@ public abstract class ItemData : ScriptableObject
     public bool IsStackable => isStackable;
     public int MaxStackCount => isStackable ? maxStackCount : 1;
 
-    public virtual bool Use(Player player)
+    public virtual bool Use(PlayerHealth playerHealth)
     {
         return false;
     }
-
-#if UNITY_EDITOR
-    public void InitForTest(int itemId, string itemName, string description, int price, bool isStackable, int maxStackCount, ItemType itemType = ItemType.Material)
-    {
-        this.itemId = itemId;
-        this.itemName = itemName;
-        this.description = description;
-        this.price = price;
-        this.isStackable = isStackable;
-        this.maxStackCount = maxStackCount;
-        this.itemType = itemType;
-    }
-#endif
 }
 
