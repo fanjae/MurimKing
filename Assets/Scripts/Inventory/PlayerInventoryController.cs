@@ -9,9 +9,9 @@
         this.itemDatabase = itemDatabase;
     }
 
-    public bool UseConsumableFromInventory(int slotIndex, Player player)
+    public bool UseConsumableFromInventory(int slotIndex,PlayerHealth playerHealth)
     {
-        if (player == null) return false;
+        if (playerHealth == null) return false;
 
         if (!inventory.TryGetSlot(slotIndex, out InventorySlot inventorySlot))
             return false;
@@ -24,7 +24,7 @@
         if (itemData is not ConsumableData consumableData)
             return false;
 
-        bool used = consumableData.Use(player);
+        bool used = consumableData.Use(playerHealth);
         if (!used) return false;
 
         return inventory.RemoveItemAt(slotIndex, 1);
