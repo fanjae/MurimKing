@@ -17,6 +17,11 @@ public class PlayerHealth : MonoBehaviour
     private CharacterController characterController;
     private Animator animator;
 
+    public float CurrentHP => currentHP;
+    public float MaxHP => maxHP;
+    public bool IsDead => isDead;
+    public bool CanHeal => !isDead && currentHP > 0f && currentHP < maxHP;
+
     private void Awake()
     {
         stateManager = GetComponent<PlayerStateManager>();
@@ -27,14 +32,19 @@ public class PlayerHealth : MonoBehaviour
         UpdateHpGage(); 
     }
 
-    public void Heal(float amount)
+    public bool Heal(float amount)
     {
-        if (currentHP <= 0.0f) return; // 회복 불가
+        if (amount <= 0f) return false;
 
-        currentHP += amount;
-        currentHP = Mathf.Clamp(currentHP, 0.0f, maxHP); // 0~maxHP 범위까지
+        if (!CanHeal) return false;
 
-        UpdateHpGage(); 
+        float previousHP = currentHP;
+
+        currentHP = Mathf.Clamp(currentHP + amount,0f,maxHP);
+
+        UpdateHpGage();
+
+        return currentHP > previousHP;
     }
     public void TakeDamage(float damage) // 데미지 입음
     {
