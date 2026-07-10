@@ -9,11 +9,13 @@ public class InventoryUIController : MonoBehaviour
 
     private void Awake()
     {
+        input = inputSource as IPlayerInput;
         inventoryPanel.SetActive(false);
     }
 
     private void Update()
     {
+
         if (input == null || !input.InventoryPressed)  return;
 
         inventoryPanel.SetActive(!inventoryPanel.activeSelf);

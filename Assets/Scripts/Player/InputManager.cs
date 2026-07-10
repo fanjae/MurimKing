@@ -51,5 +51,6 @@ public class InputManager : MonoBehaviour, IPlayerInput
         CameraRotatePressed = cameraAction.IsPressed();
 
         InventoryPressed = inventoryAction.WasPressedThisFrame();
+
     }
 }
