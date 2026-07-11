@@ -52,4 +52,17 @@
 
         return inventory.SwapSlots(fromIndex, toIndex);
     }
+    public bool CanAddToInventory(ItemData itemData, int count = 1)
+    {
+        if (itemData == null || count <= 0) return false;
+
+        return inventory.CanAddItem(itemData, count);
+    }
+
+    public bool AddToInventory(ItemData itemData, int count = 1)
+    {
+        if (!CanAddToInventory(itemData, count)) return false;
+
+        return inventory.AddItem(itemData, count);
+    }
 }
