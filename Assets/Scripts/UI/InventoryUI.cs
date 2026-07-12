@@ -1,11 +1,19 @@
-﻿using UnityEngine;
+﻿using TMPro;
+using UnityEngine;
 
 public class InventoryUI : MonoBehaviour
 {
+    [Header("Gold UI")]
+    [SerializeField] private PlayerGoldController goldController;
+    [SerializeField] private TMP_Text goldText;
+
     [SerializeField] private InventorySlotUI[] slotUIs;
     [SerializeField] private ItemDatabase itemDatabase;
     [SerializeField] private ItemTooltipUI tooltipUI;
     [SerializeField] private ItemActionMenuUI actionMenuUI;
+
+    [Header("Shop")]
+    [SerializeField] private ShopUI shopUI;
 
     [SerializeField] private PlayerHealth playerHealth;
     [SerializeField] private Canvas rootCanvas;
@@ -16,17 +24,54 @@ public class InventoryUI : MonoBehaviour
 
     public Canvas RootCanvas => rootCanvas;
 
-    public void Init(Inventory newInventory)
+    public void Init(
+    Inventory newInventory,
+    PlayerInventoryController newInventoryController,
+    ItemDatabase newItemDatabase)
     {
-        // 기존 이벤트 제거
-        if (inventory != null) inventory.OnInventoryChanged -= Refresh;
+        if (inventory != null)
+        {
+            inventory.OnInventoryChanged -= Refresh;
+        }
+
+        // 중복 구독 방지
+        if (goldController != null)
+        {
+            goldController.OnGoldChanged -= RefreshGold;
+        }
 
         inventory = newInventory;
+        inventoryController = newInventoryController;
+        itemDatabase = newItemDatabase;
 
-        // 인벤토리 조작을 담당하는 컨트롤러 생성
-        inventoryController = new PlayerInventoryController(inventory,itemDatabase);
+        if (inventory == null)
+        {
+            Debug.LogError("Inventory가 null입니다.");
+            return;
+        }
 
-        // 모든 슬롯 UI 초기화
+        if (inventoryController == null)
+        {
+            Debug.LogError("PlayerInventoryController가 null입니다.");
+            return;
+        }
+
+        if (itemDatabase == null)
+        {
+            Debug.LogError("ItemDatabase가 null입니다.");
+            return;
+        }
+
+        if (goldController == null)
+        {
+            Debug.LogError("PlayerGoldController가 연결되지 않았습니다.");
+        }
+
+        if (goldText == null)
+        {
+            Debug.LogError("Gold Text가 연결되지 않았습니다.");
+        }
+
         for (int i = 0; i < slotUIs.Length; i++)
         {
             if (slotUIs[i] == null)
@@ -38,8 +83,16 @@ public class InventoryUI : MonoBehaviour
             slotUIs[i].Init(i, this);
         }
 
-        // 인벤토리 변경 시 UI 자동 갱신
         inventory.OnInventoryChanged += Refresh;
+
+        if (goldController != null)
+        {
+            goldController.OnGoldChanged += RefreshGold;
+
+            // Awake에서 발생한 최초 이벤트를 놓칠 수 있으므로 직접 초기화
+            RefreshGold(goldController.Gold);
+        }
+
         Refresh();
     }
 
@@ -108,6 +161,8 @@ public class InventoryUI : MonoBehaviour
     private void OnDestroy()
     {
         if (inventory != null) inventory.OnInventoryChanged -= Refresh;
+
+        if (goldController != null) goldController.OnGoldChanged -= RefreshGold;
     }
 
     // 우클릭 메뉴 표시
@@ -116,7 +171,8 @@ public class InventoryUI : MonoBehaviour
         if (inventory == null) return;
 
         // 슬롯 확인
-        if (!inventory.TryGetSlot(slotIndex, out InventorySlot slot)) return;
+        // if (!inventory.TryGetSlot(slotIndex, out InventorySlot slot)) return;
+        if (!inventoryController.TryGetInventorySlot(slotIndex, out InventorySlot slot)) return;
 
         // 빈 슬롯은 메뉴 띄우지 않음
         if (slot.IsEmpty) return;
@@ -124,9 +180,10 @@ public class InventoryUI : MonoBehaviour
         // 선택 슬롯 변경
         selectedIndex = slotIndex;
         Refresh();
-        
+
         // 메뉴 생성 및 버튼 이벤트 연결
-        actionMenuUI.Show(slotIndex,screenPosition,UseItem,DropItem);
+        bool canSell = shopUI != null && shopUI.IsOpen;
+        actionMenuUI.Show(slotIndex, screenPosition, UseItem, DropItem, SellItem, canSell);
     }
 
     // 선택한 아이템 사용
@@ -171,5 +228,35 @@ public class InventoryUI : MonoBehaviour
         {
             Debug.LogWarning($"인벤토리 슬롯 교환 실패: {fromIndex} -> {toIndex}");
         }
+    }
+
+    private void RefreshGold(int gold)
+    {
+        if (goldText == null)
+            return;
+
+        goldText.text = $"GOLD : {gold}G";
+    }
+
+    // 선택한 아이템 한 개 판매
+    private void SellItem(int slotIndex)
+    {
+        if (shopUI == null || !shopUI.IsOpen)
+        {
+            Debug.LogWarning("열려 있는 상점이 없습니다.");
+            return;
+        }
+
+        bool sold = shopUI.SellItemAt(slotIndex, 1);
+
+        if (!sold)
+        {
+            Debug.LogWarning("아이템 판매에 실패했습니다.");
+            return;
+        }
+
+        selectedIndex = -1;
+
+        Debug.Log("아이템을 판매했습니다.");
     }
 }
