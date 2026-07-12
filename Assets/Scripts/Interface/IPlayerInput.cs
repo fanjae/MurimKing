@@ -11,4 +11,6 @@ public interface IPlayerInput
     bool CameraRotatePressed { get; }
 
     bool InventoryPressed { get; }
+
+    bool InteractPressed { get; }
 }
