@@ -19,7 +19,7 @@ public class PlayerInventory : MonoBehaviour
         inventory = new Inventory(12);
         controller = new PlayerInventoryController(inventory, itemDatabase);
 
-        inventoryUI.Init(inventory);
+        inventoryUI.Init(inventory,controller,itemDatabase);
         itemPickup.Init(inventory);
     }
 }
