@@ -1,20 +1,37 @@
 ﻿using UnityEngine;
 
-public enum ItemType
-{
-    Consumable,
-    Equipment,
-    Etc
-}
-
 public abstract class ItemData : ScriptableObject
 {
-    public int Id;
-    public string itemName;
-    [TextArea] public string description;
-    public Sprite icon;
+    [Header("아이디 정보")]
+    [SerializeField] private int itemId;
 
-    public ItemType type;
-    public bool isStackable = true;
-    public int maxStackCount = 99;
+    [Header("기본 정보")]
+    [SerializeField] private string itemName;
+    [TextArea]
+    [SerializeField] private string description;
+    [SerializeField] private int price;
+    [SerializeField] private Sprite icon;
+
+    [Header("분류")]
+    [SerializeField] private ItemType itemType;
+
+    [Header("스택 여부")]
+    [SerializeField] private bool isStackable = true;
+    [SerializeField] private int maxStackCount = 99;
+
+    public int ItemId => itemId;
+    public string ItemName => itemName;
+    public string Description => description;
+    public Sprite Icon => icon;
+    public int Price => price;
+    public ItemType ItemType => itemType;
+
+    public bool IsStackable => isStackable;
+    public int MaxStackCount => isStackable ? maxStackCount : 1;
+
+    public virtual bool Use(PlayerHealth playerHealth)
+    {
+        return false;
+    }
 }
+
