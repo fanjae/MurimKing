@@ -65,4 +65,9 @@
 
         return inventory.AddItem(itemData, count);
     }
+
+    public bool TryGetInventorySlot(int slotIndex,out InventorySlot inventorySlot)
+    {
+        return inventory.TryGetSlot(slotIndex, out inventorySlot);
+    }
 }
